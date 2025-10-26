@@ -16,6 +16,7 @@ struct ContentView: View {
         animation: .default) private var pokedex: FetchedResults<Pokemon>
     
     @State private var searchText = ""
+    @State private var filterByFavorites = false
     
     let fetcher = FetchService()
     
@@ -27,7 +28,9 @@ struct ContentView: View {
             predicates.append(NSPredicate(format: "name contains[c] %@", searchText))
         }
         // Filter by favorite predicate
-        
+        if filterByFavorites {
+            predicates.append(NSPredicate(format: "favorite == %d", true))
+        }
         // Combine predicate
         return NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
     }
@@ -71,12 +74,20 @@ struct ContentView: View {
             .onChange(of: searchText) {
                 pokedex.nsPredicate = dynamicPredicate
             }
+            .onChange(of: filterByFavorites) {
+                pokedex.nsPredicate = dynamicPredicate
+            }
             .navigationDestination(for: Pokemon.self) { pokemon in
                 Text(pokemon.name ?? "no name")
             }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
+                    Button {
+                        filterByFavorites.toggle()
+                    } label: {
+                        Label(image: filterByFavorites ? "star.fill" : "star")
+                    }
+                    .tint(.yellow)
                 }
                 ToolbarItem {
                     Button("Add Item", systemImage: "plus") {
