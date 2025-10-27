@@ -52,6 +52,11 @@ struct ContentView: View {
                             Text(pokemon.name!.capitalized)
                                 .fontWeight(.bold)
                             
+                            if pokemon.favorite {
+                                Image(systemName: "star.fill")
+                                    .foregroundStyle(.yellow)
+                            }
+                            
                             HStack {
                                 ForEach(pokemon.types!, id: \.self) {type in
                                     Text(type.capitalized)
@@ -85,7 +90,7 @@ struct ContentView: View {
                     Button {
                         filterByFavorites.toggle()
                     } label: {
-                        Label(image: filterByFavorites ? "star.fill" : "star")
+                        Label("Filter By Favorites:", systemImage: filterByFavorites ? "star.fill" : "star")
                     }
                     .tint(.yellow)
                 }
